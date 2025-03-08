@@ -1,17 +1,15 @@
-# Use an official Python image
-FROM python:3.10-slim
+# Use Python 3.10 base image
+FROM python:3.10
 
-# Set the working directory
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the requirements file
+# Copy the requirements file and install dependencies
 COPY requirements.txt .
-
-# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the application files
-COPY stream.py .
+# Copy the bot script
+COPY olx.py .
 
-# Run the script
-CMD ["python", "stream.py"]
+# Run the bot
+CMD ["python", "olx.py"]
