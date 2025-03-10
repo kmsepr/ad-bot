@@ -4,14 +4,10 @@ import requests
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, MessageHandler, filters, CallbackContext
 
-# ✅ Load environment variables from Koyeb
+# ✅ Load environment variables
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHANNEL_ID = os.getenv("CHANNEL_ID")
-KOYEB_DOMAIN = os.getenv("KOYEB_DOMAIN")
-
-# Check if environment variables are set
-if not all([BOT_TOKEN, CHANNEL_ID, KOYEB_DOMAIN]):
-    raise ValueError("❌ Missing required environment variables! Check BOT_TOKEN, CHANNEL_ID, KOYEB_DOMAIN.")
+KOYEB_DOMAIN = os.getenv("KOYEB_DOMAIN")  # Auto-generated domain from Koyeb
 
 # 🔥 Set up logging
 logging.basicConfig(format="%(asctime)s - %(levelname)s - %(message)s", level=logging.INFO)
@@ -32,19 +28,19 @@ async def handle_photo(update: Update, context: CallbackContext):
 
     await update.message.reply_text("✅ Ad posted successfully!")
 
-# 🚀 Start Bot
+# 🚀 Start Bot with Webhook
 def main():
     app = Application.builder().token(BOT_TOKEN).build()
 
     # Add handlers
     app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
 
-    # Set webhook
+    # Start webhook with correct parameters
     app.run_webhook(
         listen="0.0.0.0",
         port=8000,
-        webhook_path=f"/{BOT_TOKEN}",
-        secret_token=BOT_TOKEN
+        url_path=BOT_TOKEN,  # Corrected argument
+        webhook_url=f"https://{KOYEB_DOMAIN}/{BOT_TOKEN}"  # Ensure KOYEB_DOMAIN is set
     )
 
 if __name__ == "__main__":
